@@ -9,11 +9,11 @@ MOCK_GPS_FIX = {
     "latitude": 37.7749,
     "longitude": -122.4194,
     "altitude": 50.0,
-    "status": {"status": 0}  # GPS_FIX
+    "status": {"status": 0},  # GPS_FIX
 }
 
 MOCK_IMU_DATA = {
     "orientation": {"x": 0.0, "y": 0.0, "z": 0.0, "w": 1.0},
     "angular_velocity": {"x": 0.0, "y": 0.0, "z": 0.1},
-    "linear_acceleration": {"x": 0.1, "y": 0.0, "z": 9.81}
+    "linear_acceleration": {"x": 0.1, "y": 0.0, "z": 9.81},
 }

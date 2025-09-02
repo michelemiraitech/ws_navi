@@ -8,9 +8,9 @@ description = "CI/CD pipeline for ROS 2 Vehicle Navigation project"
 include = ["**/*.py", "pyproject.toml", "README.md", "src/**/*", "tests/**/*"]
 exclude = [
     "**/__pycache__",
-    "**/*.pyc", 
+    "**/*.pyc",
     "**/build",
-    "**/install", 
+    "**/install",
     "**/log",
     "**/.venv",
     "**/.git"

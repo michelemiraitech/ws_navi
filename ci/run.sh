@@ -67,7 +67,7 @@ print_help() {
 
 check_dependencies() {
     echo -e "${BLUE}Checking dependencies...${NC}"
-    
+
     # Check for Dagger CLI
     if ! command -v dagger &> /dev/null; then
         echo -e "${RED}❌ Dagger CLI not found${NC}"
@@ -81,7 +81,7 @@ check_dependencies() {
         DAGGER_VERSION=$(dagger version 2>/dev/null | head -1 || echo "unknown")
         echo -e "${GREEN}✅ Dagger CLI found: ${DAGGER_VERSION}${NC}"
     fi
-    
+
     # Check for Docker (Dagger backend)
     if ! command -v docker &> /dev/null; then
         echo -e "${YELLOW}⚠️  Docker not found - Dagger may not work properly${NC}"
@@ -94,7 +94,7 @@ check_dependencies() {
             echo -e "${GREEN}✅ Docker is running${NC}"
         fi
     fi
-    
+
     # Check if we're in the right directory
     if [ ! -f "dagger.toml" ]; then
         echo -e "${RED}❌ dagger.toml not found${NC}"
@@ -138,16 +138,16 @@ print_usage() {
 
 install_dagger() {
     echo -e "${YELLOW}Installing Dagger CLI...${NC}"
-    
+
     if command -v dagger &> /dev/null; then
         echo -e "${GREEN}✓ Dagger CLI already installed${NC}"
         dagger version
         return 0
     fi
-    
+
     # Install Dagger CLI
     curl -L https://dl.dagger.io/dagger/install.sh | BIN_DIR=/usr/local/bin sudo -E sh
-    
+
     if command -v dagger &> /dev/null; then
         echo -e "${GREEN}✓ Dagger CLI installed successfully${NC}"
         dagger version
@@ -173,9 +173,9 @@ run_full_pipeline() {
     echo "  Integration Tests: $RUN_INTEGRATION_TESTS"
     echo "  Linting: $RUN_LINTING"
     echo ""
-    
+
     check_dagger
-    
+
     echo -e "${YELLOW}🔧 Executing Dagger pipeline...${NC}"
     dagger call build-and-test \
         --source . \
@@ -183,7 +183,7 @@ run_full_pipeline() {
         --python-version "$PYTHON_VERSION" \
         --run-integration-tests="$RUN_INTEGRATION_TESTS" \
         --run-linting="$RUN_LINTING"
-    
+
     echo -e "${GREEN}✅ Local pipeline completed - matches GitHub Actions results${NC}"
 }
 
@@ -192,9 +192,9 @@ run_lint_only() {
     echo -e "${YELLOW}Configuration:${NC}"
     echo "  Python Version: $PYTHON_VERSION"
     echo ""
-    
+
     check_dagger
-    
+
     dagger call lint-only \
         --source . \
         --python-version "$PYTHON_VERSION"
@@ -202,12 +202,12 @@ run_lint_only() {
 
 build_docs() {
     echo -e "${BLUE}📚 Building Documentation${NC}"
-    
+
     check_dagger
-    
+
     echo -e "${YELLOW}Building documentation...${NC}"
     dagger call build-docs --source . export --path ./docs-output
-    
+
     if [ -d "./docs-output" ]; then
         echo -e "${GREEN}✓ Documentation built successfully${NC}"
         echo -e "${YELLOW}Output directory: ./docs-output${NC}"

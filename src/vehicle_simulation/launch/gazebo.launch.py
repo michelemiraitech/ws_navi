@@ -1,7 +1,7 @@
 from launch import LaunchDescription
-from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -14,28 +14,28 @@ def generate_launch_description():
             "world",
             default_value="empty_world.world",
             description="World file name",
-        )
+        ),
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "x_pose",
             default_value="0.0",
             description="x position",
-        )
+        ),
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "y_pose",
             default_value="0.0",
             description="y position",
-        )
+        ),
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "z_pose",
             default_value="0.0",
             description="z position",
-        )
+        ),
     )
 
     # Initialize Arguments
@@ -47,12 +47,12 @@ def generate_launch_description():
     # Gazebo
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            [FindPackageShare("gazebo_ros"), "/launch", "/gazebo.launch.py"]
+            [FindPackageShare("gazebo_ros"), "/launch", "/gazebo.launch.py"],
         ),
         launch_arguments={
             "world": PathJoinSubstitution(
-                [FindPackageShare("vehicle_simulation"), "worlds", world]
-            )
+                [FindPackageShare("vehicle_simulation"), "worlds", world],
+            ),
         }.items(),
     )
 
@@ -61,9 +61,13 @@ def generate_launch_description():
         [
             "xacro ",
             PathJoinSubstitution(
-                [FindPackageShare("vehicle_description"), "urdf", "vehicle_gazebo.urdf.xacro"]
+                [
+                    FindPackageShare("vehicle_description"),
+                    "urdf",
+                    "vehicle_gazebo.urdf.xacro",
+                ],
             ),
-        ]
+        ],
     )
     robot_description = {"robot_description": robot_description_content}
 

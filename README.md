@@ -7,7 +7,7 @@ A comprehensive ROS 2 navigation system for autonomous vehicles with GPS/IMU loc
 This project implements a complete autonomous vehicle navigation system using:
 
 - **ROS 2 Jazzy** - Latest ROS distribution
-- **Nav2** - Navigation stack with DWB controller and AMCL localization  
+- **Nav2** - Navigation stack with DWB controller and AMCL localization
 - **Gazebo** - Physics-based simulation environment
 - **GPS/IMU Integration** - Multi-sensor fusion with robot_localization
 - **Cartographer SLAM** - Google's SLAM solution for mapping
@@ -151,7 +151,7 @@ This project uses **uv** for fast and reliable Python dependency management alon
 ### Python Dependencies
 The project includes several Python utilities:
 - **GPS conversion**: UTM coordinate conversion for localization
-- **Navigation analysis**: Performance monitoring and path analysis  
+- **Navigation analysis**: Performance monitoring and path analysis
 - **Setup tools**: System checks and workspace management
 - **Testing framework**: Comprehensive test suite with pytest
 
@@ -182,7 +182,7 @@ This project uses **Dagger** to provide **identical CI pipelines** locally and i
 # Run with different ROS distro
 ROS_DISTRO=humble ./ci/run.sh build-and-test
 
-# Development utilities  
+# Development utilities
 ./ci/dev.sh setup    # Setup development environment
 ./ci/dev.sh test     # Run full pipeline locally
 ./ci/dev.sh lint     # Run only linting
@@ -202,7 +202,7 @@ ROS_DISTRO=humble ./ci/run.sh build-and-test
 #### Local Development Matches CI
 When you run `./ci/run.sh`, you get the **exact same environment** as GitHub Actions:
 - Same ROS Docker containers
-- Same dependency versions  
+- Same dependency versions
 - Same test procedures
 - Same linting rules
 - Same build process

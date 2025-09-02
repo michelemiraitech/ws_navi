@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, Command
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -13,7 +13,7 @@ def generate_launch_description():
             "use_sim_time",
             default_value="true",
             description="Use simulation (Gazebo) clock if true",
-        )
+        ),
     )
 
     # Initialize Arguments
@@ -24,9 +24,13 @@ def generate_launch_description():
         [
             "xacro ",
             PathJoinSubstitution(
-                [FindPackageShare("vehicle_description"), "urdf", "vehicle_gazebo.urdf.xacro"]
+                [
+                    FindPackageShare("vehicle_description"),
+                    "urdf",
+                    "vehicle_gazebo.urdf.xacro",
+                ],
             ),
-        ]
+        ],
     )
     robot_description = {"robot_description": robot_description_content}
 
@@ -39,11 +43,13 @@ def generate_launch_description():
     )
 
     # RViz
-    rviz_config = PathJoinSubstitution([
-        FindPackageShare("vehicle_description"),
-        "config",
-        "vehicle_view.rviz"
-    ])
+    rviz_config = PathJoinSubstitution(
+        [
+            FindPackageShare("vehicle_description"),
+            "config",
+            "vehicle_view.rviz",
+        ]
+    )
 
     rviz_node = Node(
         package="rviz2",
@@ -51,7 +57,7 @@ def generate_launch_description():
         name="rviz2",
         arguments=["-d", rviz_config],
         parameters=[{"use_sim_time": use_sim_time}],
-        output="screen"
+        output="screen",
     )
 
     nodes = [

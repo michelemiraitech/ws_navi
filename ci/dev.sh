@@ -53,7 +53,7 @@ print_help() {
 
 check_dependencies() {
     echo -e "${BLUE}Checking dependencies...${NC}"
-    
+
     # Check for Dagger CLI
     if ! command -v dagger &> /dev/null; then
         echo -e "${RED}❌ Dagger CLI not found${NC}"
@@ -62,7 +62,7 @@ check_dependencies() {
     else
         echo -e "${GREEN}✅ Dagger CLI found: $(dagger version)${NC}"
     fi
-    
+
     # Check for Python
     if ! command -v python3 &> /dev/null; then
         echo -e "${RED}❌ Python 3 not found${NC}"
@@ -70,7 +70,7 @@ check_dependencies() {
     else
         echo -e "${GREEN}✅ Python found: $(python3 --version)${NC}"
     fi
-    
+
     # Check for Docker
     if ! command -v docker &> /dev/null; then
         echo -e "${YELLOW}⚠️  Docker not found - Dagger may not work properly${NC}"
@@ -81,25 +81,25 @@ check_dependencies() {
 
 setup_environment() {
     echo -e "${BLUE}Setting up development environment...${NC}"
-    
+
     # Create Python virtual environment if it doesn't exist
     if [ ! -d ".venv" ]; then
         echo "Creating Python virtual environment..."
         python3 -m venv .venv
     fi
-    
+
     # Activate virtual environment
     source .venv/bin/activate
-    
+
     # Install development dependencies
     echo "Installing Python dependencies..."
     pip install --upgrade pip
     pip install dagger-io click
-    
+
     # Make scripts executable
     chmod +x ci/run.sh
     chmod +x ci/dev.sh
-    
+
     echo -e "${GREEN}✅ Development environment setup complete${NC}"
     echo "To activate the environment, run: source .venv/bin/activate"
 }
@@ -107,7 +107,7 @@ setup_environment() {
 run_pipeline() {
     local command=$1
     shift
-    
+
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
         case $1 in
@@ -133,14 +133,14 @@ run_pipeline() {
                 ;;
         esac
     done
-    
+
     echo -e "${BLUE}Running Dagger pipeline...${NC}"
     echo "ROS Distro: $ROS_DISTRO"
     echo "Python Version: $PYTHON_VERSION"
     echo "Integration Tests: $RUN_INTEGRATION"
     echo "Linting: $RUN_LINTING"
     echo ""
-    
+
     case $command in
         test)
             dagger call build-and-test \
@@ -169,24 +169,24 @@ run_pipeline() {
 
 clean_artifacts() {
     echo -e "${BLUE}Cleaning build artifacts...${NC}"
-    
+
     # Remove build directories
     rm -rf build/ install/ log/
-    
+
     # Remove Python cache
     find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
     find . -type f -name "*.pyc" -delete 2>/dev/null || true
-    
+
     # Remove documentation output
     rm -rf docs-output/
-    
+
     # Clean Dagger cache (optional)
     read -p "Clean Dagger cache? (y/N): " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         dagger cache prune
     fi
-    
+
     echo -e "${GREEN}✅ Cleanup complete${NC}"
 }
 

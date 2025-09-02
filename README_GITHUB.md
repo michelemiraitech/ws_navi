@@ -44,7 +44,7 @@ source install/setup.bash
 # Terminal 1: Start Gazebo simulation
 ros2 launch vehicle_simulation gazebo.launch.py
 
-# Terminal 2: Launch navigation stack  
+# Terminal 2: Launch navigation stack
 ros2 launch vehicle_bringup navigation.launch.py
 
 # Terminal 3: Open RViz for visualization

@@ -15,21 +15,21 @@ def generate_launch_description():
             "use_sim_time",
             default_value="true",
             description="Use simulation (Gazebo) clock if true",
-        )
+        ),
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "slam",
             default_value="false",
             description="Whether to run SLAM",
-        )
+        ),
     )
     declared_arguments.append(
         DeclareLaunchArgument(
             "world",
             default_value="test_world.world",
             description="World file name",
-        )
+        ),
     )
 
     # Initialize Arguments
@@ -40,11 +40,13 @@ def generate_launch_description():
     # Include robot state publisher
     robot_state_publisher = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("vehicle_description"),
-                "launch",
-                "robot_state_publisher.launch.py"
-            ])
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("vehicle_description"),
+                    "launch",
+                    "robot_state_publisher.launch.py",
+                ]
+            ),
         ),
         launch_arguments={
             "use_sim_time": use_sim_time,
@@ -54,11 +56,13 @@ def generate_launch_description():
     # Include Gazebo simulation
     gazebo_simulation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("vehicle_simulation"),
-                "launch",
-                "gazebo.launch.py"
-            ])
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("vehicle_simulation"),
+                    "launch",
+                    "gazebo.launch.py",
+                ]
+            ),
         ),
         launch_arguments={
             "world": world,
@@ -68,11 +72,13 @@ def generate_launch_description():
     # Include localization
     localization = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("vehicle_localization"),
-                "launch",
-                "localization.launch.py"
-            ])
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("vehicle_localization"),
+                    "launch",
+                    "localization.launch.py",
+                ]
+            ),
         ),
         launch_arguments={
             "use_sim_time": use_sim_time,
@@ -80,11 +86,13 @@ def generate_launch_description():
     )
 
     # Cartographer SLAM
-    cartographer_config_dir = PathJoinSubstitution([
-        FindPackageShare("vehicle_bringup"),
-        "config"
-    ])
-    
+    cartographer_config_dir = PathJoinSubstitution(
+        [
+            FindPackageShare("vehicle_bringup"),
+            "config",
+        ]
+    )
+
     cartographer_node = Node(
         package="cartographer_ros",
         executable="cartographer_node",
@@ -92,10 +100,12 @@ def generate_launch_description():
         output="screen",
         parameters=[{"use_sim_time": use_sim_time}],
         arguments=[
-            "-configuration_directory", cartographer_config_dir,
-            "-configuration_basename", "cartographer.lua"
+            "-configuration_directory",
+            cartographer_config_dir,
+            "-configuration_basename",
+            "cartographer.lua",
         ],
-        condition=IfCondition(slam)
+        condition=IfCondition(slam),
     )
 
     # Occupancy grid node for cartographer
@@ -106,17 +116,19 @@ def generate_launch_description():
         output="screen",
         parameters=[{"use_sim_time": use_sim_time}],
         arguments=["-resolution", "0.05"],
-        condition=IfCondition(slam)
+        condition=IfCondition(slam),
     )
 
     # Include navigation
     navigation = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            PathJoinSubstitution([
-                FindPackageShare("vehicle_navigation"),
-                "launch", 
-                "navigation.launch.py"
-            ])
+            PathJoinSubstitution(
+                [
+                    FindPackageShare("vehicle_navigation"),
+                    "launch",
+                    "navigation.launch.py",
+                ]
+            ),
         ),
         launch_arguments={
             "use_sim_time": use_sim_time,

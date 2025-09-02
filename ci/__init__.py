@@ -1,6 +1,4 @@
-"""
-Dagger configuration and utility functions.
-"""
+"""Dagger configuration and utility functions."""
 
 import os
 from pathlib import Path

@@ -229,7 +229,7 @@ rosdep install --from-paths src --ignore-src -r -y
 - Matches CI/CD pipeline exactly
 - No "works on my machine" issues
 
-### ✅ **Speed** 
+### ✅ **Speed**
 - Pre-built image with all dependencies
 - Fast container startup
 - Incremental builds with volume mounts

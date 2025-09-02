@@ -2,7 +2,7 @@
   "name": "ROS 2 Vehicle Navigation Dev Environment",
   "dockerFile": "Dockerfile",
   "context": "..",
-  
+
   // Configure tool-specific properties
   "customizations": {
     "vscode": {
@@ -22,7 +22,7 @@
         "github.copilot",
         "github.copilot-chat"
       ],
-      
+
       // VS Code settings
       "settings": {
         "python.defaultInterpreterPath": "/opt/venv/bin/python",

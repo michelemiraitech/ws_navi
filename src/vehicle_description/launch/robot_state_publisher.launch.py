@@ -1,6 +1,6 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution
+from launch.substitutions import Command, LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -13,7 +13,7 @@ def generate_launch_description():
             "use_sim_time",
             default_value="false",
             description="Use simulation (Gazebo) clock if true",
-        )
+        ),
     )
 
     # Initialize Arguments
@@ -24,9 +24,9 @@ def generate_launch_description():
         [
             "xacro ",
             PathJoinSubstitution(
-                [FindPackageShare("vehicle_description"), "urdf", "vehicle.urdf.xacro"]
+                [FindPackageShare("vehicle_description"), "urdf", "vehicle.urdf.xacro"],
             ),
-        ]
+        ],
     )
     robot_description = {"robot_description": robot_description_content}
 

@@ -4,34 +4,34 @@
 ekf_filter_node:
   ros__parameters:
     use_sim_time: true
-    
-    # The frequency, in Hz, at which the filter will output a position estimate. 
+
+    # The frequency, in Hz, at which the filter will output a position estimate.
     frequency: 30.0
-    
+
     # Delay between receiving a measurement and applying it. Should be the expected delay
     # (in seconds) between the measurement being taken and the pose being published.
     sensor_timeout: 0.1
-    
+
     # If this is set to true, no 3D information will be used in your state estimate.
     two_d_mode: false
-    
+
     # Use this to set the initial variance for each variable.
     transform_time_offset: 0.0
     transform_timeout: 0.0
     print_diagnostics: true
     debug: false
     debug_out_file: /path/to/debug/file.txt
-    
+
     # REP-105 compliance
     map_frame: map
     odom_frame: odom
     base_link_frame: base_link
     world_frame: odom
-    
+
     # Which variables to use from each sensor
     # Format: [X,  Y,  Z,  roll, pitch, yaw, vx, vy, vz, vroll, vpitch, vyaw, ax, ay, az]
-    
-    # Odometry from wheel encoders - using only x, y position and yaw 
+
+    # Odometry from wheel encoders - using only x, y position and yaw
     odom0: odom
     odom0_config: [true,  true,  false,
                    false, false, true,
@@ -42,7 +42,7 @@ ekf_filter_node:
     odom0_nodelay: false
     odom0_differential: false
     odom0_relative: false
-    
+
     # IMU data - using orientation and angular velocities
     imu0: imu
     imu0_config: [false, false, false,
@@ -55,7 +55,7 @@ ekf_filter_node:
     imu0_differential: false
     imu0_relative: true
     imu0_remove_gravitational_acceleration: true
-    
+
     # GPS data - using global position
     # Note: This would typically be converted to local coordinates first
     pose0: gps/utm
@@ -68,7 +68,7 @@ ekf_filter_node:
     pose0_nodelay: false
     pose0_differential: false
     pose0_relative: false
-    
+
     # Process noise covariance matrix
     process_noise_covariance: [0.05, 0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
                                0,    0.05, 0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0,
@@ -85,7 +85,7 @@ ekf_filter_node:
                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0.01, 0,    0,
                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0.01, 0,
                                0,    0,    0,    0,    0,    0,    0,     0,     0,    0,    0,    0,    0,    0,    0.015]
-    
+
     # Initial state estimate covariance matrix
     initial_estimate_covariance: [1e-9, 0,    0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,
                                   0,    1e-9, 0,    0,    0,    0,    0,    0,    0,    0,     0,     0,     0,    0,    0,

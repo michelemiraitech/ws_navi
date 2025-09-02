@@ -14,7 +14,7 @@ cd /workspace
 if [ -f "pyproject.toml" ]; then
     echo "🐍 Setting up Python environment with uv..."
     source /opt/venv/bin/activate
-    
+
     # Install project dependencies
     if [ -f "pyproject.toml" ]; then
         uv pip install -e . || echo "⚠️  Could not install project in editable mode"

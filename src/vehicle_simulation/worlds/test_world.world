@@ -7,7 +7,7 @@
     <include>
       <uri>model://sun</uri>
     </include>
-    
+
     <!-- A simple test environment with obstacles -->
     <model name='wall_1'>
       <pose>5 0 0.5 0 0 0</pose>
