@@ -1,0 +1,34 @@
+{
+  "names": {
+    "vehicle_description": {
+      "build": {
+        "symlink-install": true
+      }
+    },
+    "vehicle_simulation": {
+      "build": {
+        "symlink-install": true
+      }
+    },
+    "vehicle_navigation": {
+      "build": {
+        "symlink-install": true
+      }
+    },
+    "vehicle_localization": {
+      "build": {
+        "symlink-install": true
+      }
+    },
+    "vehicle_control": {
+      "build": {
+        "symlink-install": true
+      }
+    },
+    "vehicle_bringup": {
+      "build": {
+        "symlink-install": true
+      }
+    }
+  }
+}

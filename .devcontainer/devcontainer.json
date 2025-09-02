@@ -1,0 +1,125 @@
+{
+  "name": "ROS 2 Vehicle Navigation Dev Environment",
+  "dockerFile": "Dockerfile",
+  "context": "..",
+  
+  // Configure tool-specific properties
+  "customizations": {
+    "vscode": {
+      // Extensions to install
+      "extensions": [
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.python",
+        "ms-python.pylint",
+        "charliermarsh.ruff",
+        "ms-vscode.cmake-tools",
+        "ms-iot.vscode-ros",
+        "dotjoshjohnson.xml",
+        "redhat.vscode-yaml",
+        "ms-vscode.hexdump",
+        "eamodio.gitlens",
+        "github.copilot",
+        "github.copilot-chat"
+      ],
+      
+      // VS Code settings
+      "settings": {
+        "python.defaultInterpreterPath": "/opt/venv/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": false,
+        "[python]": {
+          "editor.formatOnSave": true,
+          "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+          }
+        },
+        "python.analysis.autoImportCompletions": true,
+        "python.analysis.typeCheckingMode": "basic",
+        "files.associations": {
+          "*.launch": "xml",
+          "*.xacro": "xml",
+          "*.urdf": "xml",
+          "*.sdf": "xml",
+          "*.world": "xml"
+        },
+        "cmake.configureOnOpen": false,
+        "ros.distro": "jazzy"
+      }
+    }
+  },
+
+  // Features to add to the dev container
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally
+  "forwardPorts": [
+    8080,  // Web interfaces
+    9090,  // ROS bridge
+    5901,  // VNC
+    6901   // noVNC
+  ],
+
+  // Ports that should be published
+  "portsAttributes": {
+    "8080": {
+      "label": "Web Interface",
+      "onAutoForward": "notify"
+    },
+    "9090": {
+      "label": "ROS Bridge",
+      "onAutoForward": "ignore"
+    },
+    "5901": {
+      "label": "VNC",
+      "onAutoForward": "ignore"
+    },
+    "6901": {
+      "label": "noVNC Web",
+      "onAutoForward": "notify"
+    }
+  },
+
+  // Set environment variables
+  "containerEnv": {
+    "ROS_DISTRO": "jazzy",
+    "DISPLAY": ":1",
+    "QT_X11_NO_MITSHM": "1",
+    "LIBGL_ALWAYS_SOFTWARE": "1"
+  },
+
+  // Mount the workspace and preserve git
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "source=${localEnv:HOME}/.ssh,target=/root/.ssh,type=bind,consistency=cached,readonly"
+  ],
+
+  // Commands to run after container creation
+  "postCreateCommand": ".devcontainer/post-create.sh",
+
+  // Commands to run after the container starts
+  "postStartCommand": ".devcontainer/post-start.sh",
+
+  // Set the default user
+  "remoteUser": "ros",
+  "workspaceFolder": "/workspace",
+
+  // Enable privileged mode for hardware access
+  "privileged": true,
+
+  // Additional run arguments
+  "runArgs": [
+    "--network=host",
+    "--ipc=host",
+    "--pid=host",
+    "--env-file=.devcontainer/.env"
+  ],
+
+  // Lifecycle scripts
+  "initializeCommand": ".devcontainer/initialize.sh"
+}

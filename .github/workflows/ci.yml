@@ -1,0 +1,204 @@
+# GitHub Actions CI using Dagger
+name: ROS 2 Vehicle Navigation CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      ros_distro:
+        description: 'ROS distribution to test'
+        required: false
+        default: 'jazzy'
+        type: choice
+        options:
+          - jazzy
+          - humble
+          - iron
+      run_integration_tests:
+        description: 'Run integration tests'
+        required: false
+        default: true
+        type: boolean
+
+env:
+  DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+
+jobs:
+  # Quick linting job for fast feedback
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Dagger CLI
+        run: |
+          curl -L https://dl.dagger.io/dagger/install.sh | DAGGER_VERSION=0.9.0 sh
+          sudo mv bin/dagger /usr/local/bin
+          dagger version
+
+      - name: Run linting with Dagger
+        run: |
+          dagger call lint-only --source . --python-version "3.10"
+
+  # Main build and test job
+  build-and-test:
+    name: Build & Test (ROS ${{ matrix.ros_distro }}, Python ${{ matrix.python_version }})
+    runs-on: ubuntu-latest
+    needs: lint
+    timeout-minutes: 45
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        ros_distro: [jazzy, humble]
+        python_version: ["3.10", "3.11"]
+        exclude:
+          # Humble has issues with Python 3.11
+          - ros_distro: humble
+            python_version: "3.11"
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+
+      - name: Install Dagger CLI
+        run: |
+          curl -L https://dl.dagger.io/dagger/install.sh | DAGGER_VERSION=0.9.0 sh
+          sudo mv bin/dagger /usr/local/bin
+          dagger version
+
+      - name: Run full CI pipeline with Dagger
+        env:
+          ROS_DISTRO: ${{ matrix.ros_distro }}
+          PYTHON_VERSION: ${{ matrix.python_version }}
+          RUN_INTEGRATION: ${{ github.event.inputs.run_integration_tests || 'true' }}
+        run: |
+          dagger call build-and-test \
+            --source . \
+            --ros-distro "${ROS_DISTRO}" \
+            --python-version "${PYTHON_VERSION}" \
+            --run-integration-tests="${RUN_INTEGRATION}" \
+            --run-linting=false
+
+      - name: Export test results
+        if: always()
+        run: |
+          # Export test artifacts from Dagger if available
+          dagger call build-and-test \
+            --source . \
+            --ros-distro ${{ matrix.ros_distro }} \
+            --python-version ${{ matrix.python_version }} \
+            --run-integration-tests=false \
+            --run-linting=false \
+            export --path ./test-results || echo "No test results to export"
+
+      - name: Upload test artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.ros_distro }}-py${{ matrix.python_version }}
+          path: |
+            test-results/
+            coverage.xml
+            pytest-results.xml
+          retention-days: 30
+
+  # Documentation build and deployment
+  docs:
+    name: Build & Deploy Documentation
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Dagger CLI
+        run: |
+          curl -L https://dl.dagger.io/dagger/install.sh | DAGGER_VERSION=0.9.0 sh
+          sudo mv bin/dagger /usr/local/bin
+
+      - name: Build documentation with Dagger
+        run: |
+          dagger call build-docs --source . export --path ./docs-output
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs-output
+          force_orphan: true
+
+  # Security scanning
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy scan results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # Notify on completion
+  notify:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [lint, build-and-test, docs, security]
+    if: always()
+    
+    steps:
+      - name: Notify success
+        if: needs.build-and-test.result == 'success'
+        run: |
+          echo "✅ All CI jobs completed successfully!"
+          echo "- Linting: ${{ needs.lint.result }}"
+          echo "- Build & Test: ${{ needs.build-and-test.result }}"
+          echo "- Documentation: ${{ needs.docs.result }}"
+          echo "- Security: ${{ needs.security.result }}"
+
+      - name: Notify failure
+        if: needs.build-and-test.result == 'failure'
+        run: |
+          echo "❌ CI pipeline failed!"
+          echo "- Linting: ${{ needs.lint.result }}"
+          echo "- Build & Test: ${{ needs.build-and-test.result }}"
+          echo "- Documentation: ${{ needs.docs.result }}"
+          echo "- Security: ${{ needs.security.result }}"
+          exit 1
